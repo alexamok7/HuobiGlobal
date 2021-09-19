@@ -1,0 +1,11 @@
+#!/bin/sh
+cd third_party/benchmark
+cmake -E make_directory "build"
+cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+cmake --build "build" --config Release
+
+cd ../..
+mkdir build
+cd build/
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ ..
+make

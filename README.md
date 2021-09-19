@@ -35,11 +35,7 @@
   Для сборки утилиты необходимо выполнить следующий действия
   (в директории с исходным кодом программы):
   <pre>
-  cd HuobiGlobal/
-  mkdir build
-  cd build/
-  cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ ..
-  make
+  ./linux_build
   </pre> 
   
   После этого в директории bin/ появятся исполняемые файлы
