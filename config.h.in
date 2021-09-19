@@ -1,0 +1,2 @@
+#define INPUT_FILE @INPUT_FILE@
+#define OUTPUT_FILE @OUTPUT_FILE@
