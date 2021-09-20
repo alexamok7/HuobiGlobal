@@ -38,8 +38,10 @@ enum class DataType: unsigned {
   \typedef Level
   \brief Описываетает пару "цена-количество" одной заявки
          на продажу/покупку
+         Цена в формате string, так как она определяет
+         четкий фиксированный уровень
 */
-using Level = std::pair<double, double>;
+using Level = std::pair<std::string, double>;
 
 /*!
   \struct InputData

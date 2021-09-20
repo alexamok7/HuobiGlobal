@@ -161,14 +161,17 @@ void FileHandler::_parseJSON(const std::string &json, InputData &input) const {
     }
 
     // вычитываем массив заявок на продажу
-    std::vector<double> levels;
+    std::vector<std::string> levels;
     for (auto &elem : root.get_child("asks")) {
         for (auto &item : elem.second) {
-            levels.push_back(std::stof(item.second.data()));
+            // убедиться, что параметр double
+            // иначе stof выдаст исключение
+            std::stof(item.second.data());
+            levels.push_back(item.second.data());
         }
         // в массиве levels первый элемент - цена
         // второй элемент - количество
-        Level level(levels[0], levels[1]);
+        Level level(levels[0], std::stof(levels[1]));
         input.asks.push_back(level);
         levels.clear();
     }
@@ -176,9 +179,10 @@ void FileHandler::_parseJSON(const std::string &json, InputData &input) const {
     // вычитываем массив заявок на покупку
     for (auto &elem : root.get_child("bids")) {
         for (auto &item : elem.second) {
-            levels.push_back(std::stof(item.second.data()));
+            std::stof(item.second.data());
+            levels.push_back(item.second.data());
         }
-        Level level(levels[0], levels[1]);
+        Level level(levels[0], std::stof(levels[1]));
         input.bids.push_back(level);
         levels.clear();
     }

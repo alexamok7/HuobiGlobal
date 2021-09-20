@@ -1,6 +1,6 @@
 /*!
-  \file file_handler.cpp
-  \brief Реализация класса FileHandler
+  \file calculator.cpp
+  \brief Реализация класса Calculator
   \author Alex
 */
 
@@ -36,23 +36,6 @@ void Calculator::calculate() {
     std::cout << "Расчет завершен" << std::endl;
 }
 
-void Calculator::calculateForBenchmark() {
-    InputData input;
-    _fh.readData(input);
-
-    switch (input.dataType) {
-        case DataType::SNAPSHOT:
-            _calcSnapshot(input);
-            break;
-        case DataType::UPDATE:
-            _calcUpdate(input);
-            break;
-        default:
-            throw std::runtime_error(std::string("Неопознаный формат данных!"));
-    }
-}
-
-
 void Calculator::_calcSnapshot(const InputData &input) {
     // формируем текущее состояние стороны заявок на
     // продажу (сортированы по возрастанию)
@@ -60,7 +43,8 @@ void Calculator::_calcSnapshot(const InputData &input) {
         // если количество валюты = 0 - отбрасываем запись
         if (level.second == 0)
             continue;
-        _asks.insert(level);
+
+        _asks.insert({level.first, level.second});
 
         // если при вставке новой записи выясняется, что
         // количество записей на стороне заявок на продажу
@@ -74,9 +58,10 @@ void Calculator::_calcSnapshot(const InputData &input) {
     // формируем текущее состояние стороны заявок на
     // покупку (сортированы по возрастанию)
     for (auto &level : input.bids) {
-        _bids.insert(level);
         if (level.second == 0)
             continue;
+
+        _bids.insert({level.first, level.second});
 
         // если превысило MAX_BIDS, то удаляем наименьшую запись
         // здесь нас интересуют только наибольшие записи
@@ -86,10 +71,28 @@ void Calculator::_calcSnapshot(const InputData &input) {
     }
 }
 
+void Calculator::update(const InputData &input) {
+    // применяем полученную запись
+    // так как нам точно известно, что все данные в обновлении
+    // есть в снэпшоте, то не будем проверять на границы
+    for (auto &level : input.asks) {
+        // если количество валюты = 0 - отбрасываем запись
+        if (level.second == 0)
+            continue;
+        _asks[level.first] = level.second;
+    }
+
+    // формируем текущее состояние стороны заявок на
+    // покупку (сортированы по возрастанию)
+    for (auto &level : input.bids) {
+        if (level.second == 0)
+            continue;
+        _bids[level.first] = level.second;
+    }
+}
+
 void Calculator::_calcUpdate(const InputData &input) {
-    // добавляем информацию из записи input
-    // аналогично снэпшоту
-    _calcSnapshot(input);
+    update(input);
 
     Level min_ask, max_bid;
     // результирующее значение для заявок на продажу -
@@ -99,7 +102,7 @@ void Calculator::_calcUpdate(const InputData &input) {
     }
     else {
         // = 0, если заявок нет
-        min_ask = {0, 0};
+        min_ask = {"0", 0};
     }
 
     // результирующее значение для заявок на покупку -
@@ -108,10 +111,10 @@ void Calculator::_calcUpdate(const InputData &input) {
         max_bid = *_bids.rbegin();
     }
     else {
-        max_bid = {0, 0};
+        max_bid = {"0", 0};
     }
 
     // выводим результирующие значения в файл
-    _fh.writeData({input.event_time, min_ask.first,
-                   min_ask.second, max_bid.first, max_bid.second});
+    _fh.writeData({input.event_time, std::stof(min_ask.first),
+                   min_ask.second, std::stof(max_bid.first), max_bid.second});
 }

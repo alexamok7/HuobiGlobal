@@ -11,7 +11,7 @@
 #define HUOBIGLOBAL_CALCULATOR_H
 
 #include "file_handler/file_handler.h"
-#include <set>
+#include <map>
 
 /*!
   \class Calculator calculator.h
@@ -49,26 +49,28 @@ public:
     void calculate();
 
     /*!
-      Одно обновление данных и вывод результирующих показателей
-      (для бенчмарка)
+      Одно обновление данных
     */
-    void calculateForBenchmark();
+    void update(const InputData &input);
 
 private:
     // объект для чтения/записи файлов (перемещенный)
     FileHandler _fh;
     // текущее состояние биржевого стакана -
     // сторона заявок на продажу (не более MAX_ASKS)
-    // одна запись в стакане - пара "цена-количество"
-    std::set<Level> _asks;
+    // ключ - цена (в формате string, потому что double опасно
+    // из за точности представления IEEE)
+    // значение - количество
+    std::map<std::string, double> _asks;
     // текущее состояние биржевого стакана -
     // сторона заявок на продажу (не более MAX_BIDS)
-    std::set<Level> _bids;
+    std::map<std::string, double> _bids;
 
     // расчет состояния стакана после получения снапшота input
     void _calcSnapshot(const InputData &input);
     // расчет состояния стакана после получения апдейта input
     void _calcUpdate(const InputData &input);
+
 };
 
 
