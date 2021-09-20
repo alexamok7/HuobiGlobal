@@ -5,12 +5,9 @@
 */
 
 #include "file_handler.h"
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/optional/optional.hpp>
-
-
 #include <iostream>
 
 
@@ -29,12 +26,6 @@ FileHandler::FileHandler(const std::string &inFilePath, const std::string &outFi
         throw std::runtime_error(std::string("Ошибка создания выходного файла! ")
               + strerror(errno));
     }
-
-
-//    catch (const std::ofstream::failure &e) {
-//        throw std::runtime_error(std::string("Ошибка создания выходного файла: ")
-//                                 + e.what());
-//    }
 }
 
 FileHandler::~FileHandler() {

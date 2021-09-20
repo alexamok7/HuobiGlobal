@@ -1,10 +1,11 @@
-//
-// Created by alex on 17.09.2021.
-//
+/*!
+  \file file_handler.cpp
+  \brief Реализация класса FileHandler
+  \author Alex
+*/
+
 
 #include "calculator.h"
-
-
 #include <iostream>
 
 Calculator::Calculator(FileHandler &&fh) :_fh(std::move(fh)) {
@@ -83,12 +84,6 @@ void Calculator::_calcSnapshot(const InputData &input) {
             _bids.erase(_bids.begin());
         }
     }
-
-
-//    for (auto &elem : _asks) {
-//        std::cout << elem.first.first << " " << elem.first.second << std::endl;
-//    }
-
 }
 
 void Calculator::_calcUpdate(const InputData &input) {

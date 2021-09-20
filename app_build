@@ -7,8 +7,9 @@ cmake --build "build" --config Release
 cd ../..
 mkdir build
 cd build/
+rm -rf *
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ ..
 make
 
 cd ..
-mv huobi_global_depth.log bin/
+cp huobi_global_depth.log bin/
