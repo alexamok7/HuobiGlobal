@@ -6,11 +6,33 @@
 #include "calculator/calculator.h"
 #include "config.h"
 
-static void BM_Updating(benchmark::State& state) {
-    Calculator calc({INPUT_FILE, OUTPUT_FILE});
-    for (auto _ : state)
-        calc.calculateForBenchmark();
+int Count = 0;
+
+// Создадим класс fixture в котором сразу
+// проинициализируем вектор с апдейтами и класс calc
+template <class Record>
+class UpdateObjVectorFixture : public ::benchmark::Fixture {
+public:
+    void SetUp(const ::benchmark::State& st) {
+        Calculator tmp({INPUT_FILE, OUTPUT_FILE});
+        calc = std::move(tmp);
+        calc.calcSnapshotBench(records);
+    }
+
+    void TearDown(const ::benchmark::State&) {
+        records.clear();
+    }
+
+    std::vector<Record> records;
+    Calculator calc;
+};
+
+using UpdateFix = UpdateObjVectorFixture<InputData>;
+BENCHMARK_DEFINE_F(UpdateFix, Obj)(benchmark::State& state) {
+    while (state.KeepRunning()) {
+        calc._doUpdate(records[Count++ % records.size()]);
+    }
 }
-BENCHMARK(BM_Updating);
+BENCHMARK_REGISTER_F(UpdateFix, Obj);
 
 BENCHMARK_MAIN();

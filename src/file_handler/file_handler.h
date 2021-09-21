@@ -44,6 +44,8 @@ public:
     FileHandler(FileHandler&&) = default;
     /// \brief Перемещающее присваивание.
     FileHandler& operator=(FileHandler&&) = default;
+    /// \brief Дефолтный конструктор.
+    FileHandler() = default;
 
     /*!
       Чтение одной строки из входного файла

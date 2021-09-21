@@ -23,7 +23,7 @@
   Расчет производится на основе одной записи
   биржевых данных, полученных из выходного файла.
   Результирующие данные выводятся в выходной файл.
-  Не предусматривает копирования и перемещения
+  Не предусматривает перемещения
 */
 class Calculator {
 public:
@@ -39,9 +39,11 @@ public:
     /// \brief Удаленное копирующее присваивание.
     Calculator& operator=(const Calculator&) = delete;
     /// \brief Удаленный конструктор перемещения.
-    Calculator(Calculator&&) = delete;
+    Calculator(Calculator&&) = default;
     /// \brief Удаленное перемещающее присваивание.
-    Calculator& operator=(Calculator&&) = delete;
+    Calculator& operator=(Calculator&&) = default;
+    /// \brief Дефолтный конструктор.
+    Calculator() = default;
 
     /*!
       Расчет состояния биржевого стакана
@@ -49,9 +51,19 @@ public:
     void calculate();
 
     /*!
-      Одно обновление данных
+      Расчет снэпшота и вектора апдейтов (для бенчмарка)
+      \param[out] input Вектор с апдейтами для бенчмарка
     */
-    void update(const InputData &input);
+    void calcSnapshotBench(std::vector<InputData> &vec);
+
+    /*!
+     Применение апдейта и получение результирующих значений 
+     (в т.ч и для бенчмарка)
+     \param[in] input Структура с входными параметрами одной
+                        биржевой записи
+     \return Структура с результирующими значениями
+    */
+    OutputData _doUpdate(const InputData &input);
 
 private:
     // объект для чтения/записи файлов (перемещенный)
@@ -70,7 +82,6 @@ private:
     void _calcSnapshot(const InputData &input);
     // расчет состояния стакана после получения апдейта input
     void _calcUpdate(const InputData &input);
-
 };
 
 
